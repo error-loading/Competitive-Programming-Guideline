@@ -1,0 +1,851 @@
+\documentclass{report}
+
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+\usepackage{thmtools}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{geometry}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{framed}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tcolorbox}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{listings}
+\usepackage{booktabs}
+
+\colorlet{LightGray}{White!90!Periwinkle}
+\colorlet{LightOrange}{Orange!15}
+\colorlet{LightGreen}{Green!15}
+
+\newcommand{\HRule}[1]{\rule{\linewidth}{#1}}
+
+\declaretheoremstyle[name=Note,]{thmsty}
+\declaretheorem[style=thmsty,numberwithin=section]{note}
+\tcolorboxenvironment{note}{colback=LightGray}
+
+\declaretheoremstyle[name=Exercise,]{prosty}
+\declaretheorem[style=prosty,numberlike=note]{exercise}
+\tcolorboxenvironment{exercise}{colback=LightOrange}
+
+\declaretheoremstyle[name=Principle,]{prcpsty}
+\declaretheorem[style=prcpsty,numberlike=note]{principle}
+\tcolorboxenvironment{principle}{colback=LightGreen}
+
+\setstretch{1.2}
+\geometry{
+    textheight=9in,
+    textwidth=5.5in,
+    top=1in,
+    headheight=12pt,
+    headsep=25pt,
+    footskip=30pt
+}
+
+% Define the Problem Box colors
+\definecolor{problemblue}{RGB}{20,61,89}
+\definecolor{problemgray}{RGB}{242,242,242}
+
+% Create a new tcolorbox environment for the problem container
+\newtcolorbox{problembox}{
+    colback=problemgray,
+    colframe=problemblue,
+    coltitle=problemblue,
+    fonttitle=\bfseries,
+    title=Practice Problem,
+    arc=5pt,
+    boxrule=0pt,
+    left=10pt,
+    right=10pt,
+    boxsep=5pt
+}
+
+% Usage: \problem{Problem Name}{DMOJ Link}
+\newcommand{\problem}[2]{
+    \begin{problembox}
+        #1
+        
+        DMOJ Link: \href{#2}{#2}
+    \end{problembox}
+}
+
+% Define code listing style
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny,
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4,
+  showstringspaces=false
+}
+
+% ------------------------------------------------------------------------------
+
+\begin{document}
+
+% ------------------------------------------------------------------------------
+% Cover Page and ToC
+% ------------------------------------------------------------------------------
+
+\title{ \normalsize \textsc{}
+		\\ [2.0cm]
+		\HRule{1.5pt} \\
+		\LARGE \textbf{\uppercase{Computer Science Club}
+		\HRule{2.0pt} \\ [0.6cm] \LARGE{Intermediate Stream Textbook} \vspace*{10\baselineskip}}
+		}
+\date{}
+\author{\textbf{By: Gurjas Dhillon} \\ 
+		Intermediate Teacher at Vincent Massey Secondary School \\
+		Windsor, Ontario \\
+		August 28th, 2023}
+
+\maketitle
+
+\tableofcontents
+
+% ------------------------------------------------------------------------------
+
+\chapter{Getting Started with C++}
+\section{Installing C++}
+Before we are actually able to write any C++ code, we need to first install the C++ compiler and optionally a text editor/integrated development environment (IDE). Visual Studio Code stands out as the most popular IDE for programmers, but CLion is a lot more light-weight in terms of getting straight into the code after installing the IDE.
+Installation vary depending on your operating system. 
+
+\subsection*{MacOS}
+Installing the C++ compiler on MacOS is very straightforward. All you do is put command \textbf{xcode-select --install} into the terminal and go through the installer. You can use the command \textbf{clang -- version} to verify everything was installed properly. The only drawback of clang++ is that it does not include the \texttt{<bits/stdc++.h>} file. We'll talk about this more in the next section.
+
+\subsection*{Windows}
+Follow this article to install the G++ compiler: \url{https://www.freecodecamp.org/news/how-to-install-c-and-cpp-compiler-on-windows/}
+
+\subsection*{IDE Installation}
+Visual Studio Code: \url{https://code.visualstudio.com/Download}\newline
+CLion Student Account: \url{https://www.jetbrains.com/shop/eform/students}\newline
+CLion: \url{https://www.jetbrains.com/clion/download/} 
+
+\newpage
+\section{Introduction to C++}
+\begin{note}
+    For the first few sessions, we'll be using Repl.it
+\end{note}
+
+In order to get C++ running, you need to understand the boilerplate code.
+
+\begin{lstlisting}[caption=Basic C++ Syntax]
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    // print "Hello, World!"
+    cout << "Hello, World!" << endl;
+    return 0;
+}
+\end{lstlisting}
+
+The \textbf{bits/stdc++.h} is a feature of the G++ compiler. It is a header file that includes most of the standard C++ libraries into one file. This is especially useful for competitive programming since time is a huge factor when writing a contest, and this one line of code simplifies our code ten-folds. Sadly, this is only a feature for the G++ compiler. So, anyone who uses MacOS will have to write all the libraries directly. Not to worry though! While we are going through all the data structures and the ins and outs of the language, I will also include all the libraries required to use their full power.
+
+The \textbf{using} line allows us to use all the functions and classes in the C++ standard library directly in our code. Without it, we would have had to write \textbf{std::cout}. 
+
+\textbf{int main()} is a C++ function (more on that later). This is where all the code will be executed. 
+
+\textbf{// print "Hello, World!"} is an inline comment (indicated by the "//"). It is used to personal notes when programs get very complex and to explain your code when given to someone else. Multi line comments can be used by \textbf{/* comments placed here */}.
+
+The \textbf{cout} (pronounced see-out) line is outputting information to the terminal. \textbf{endl} (pronounced end line) is equivalent to the new line character.
+
+\begin{note}
+    Do not forget your semi-colons! Everything in C++ ends with them;
+\end{note}
+
+\subsection*{Practice Problem}
+
+\problem{Hello, World!}{https://dmoj.ca/problem/helloworld}
+
+\newpage
+\section{Basic Syntax}
+\subsection{Variables}
+In the world of programming, variables serve as containers for holding and manipulating data. Think of them as labeled boxes that store information, allowing us to perform calculations, make decisions, and create dynamic applications. In C++, variables are essential building blocks that enable us to work with different kinds of data, ranging from numbers and text to more complex structures. Unlike Python, you need indicate the data type when declaring the variable. This is the case for all mid-level programming languages. To create a variable, you need to first declare the data type, give the variable a name, and finally assign it a value. E.g. \lstinline{int x = 5;}
+
+One big property of C++ variables are their \textbf{mutability}. In C++, variables are dynamic in the manner that they can be re-assigned after initial declaration. C++ variables are mutable by default, but it is possible to change this my adding the keyword \textbf{const} (constant). E.g. \lstinline{const int MAXSZ = 1e6 + 2;} \newline
+
+\begin{lstlisting}[caption=Variables]
+#include <bits/stdc++.h>
+using namespace std;
+
+int x = 2;
+int y;
+int main() {
+    cout << "The value of x is : "<< x << endl; /* Outputs: 2 */
+    x = 5;
+    cout << "The value of x is : "<< x << endl; /* Outputs: 5 */
+    y = x + 2;
+    cout << "The value of y is : "<< y << endl; /* Outputs: 7 */
+}
+\end{lstlisting}
+
+\begin{note}
+    1e6 + 2 is equivalent to $10^6 + 2$ in the math world while 4e6 + 2 is equivalent to $4 \cdot 10^6 + 2$
+\end{note}
+
+\begin{principle}
+    To re-assign a variable, you don't need to include 
+\end{principle}
+
+\begin{principle}
+    It is convention to name a constant in ALL CAPS!
+\end{principle}
+
+\subsection{Data Types}
+Data types are fundamental constructs that decide what a variable can hold. Once a variable is given a data type, it is impossible to change the type. Each data type has it's own memory size, and provides a range of operations that can be performed on the associated values. The most basic data types are known as \textbf{Primitive Data Types}. These types include but are not limited to integers (int), decimals (float - floating point numbers), individual characters (char), and boolean values (bool: true or false). Then, there are \textbf{Derived Data Types} where you use primitive types to manage more complex \textbf{data structures} and organize collections of data. The last kind are called \textbf{User-defined Data Types} where you create your own data type using \textbf{classes} and \textbf{structs}. We will be mainly focusing on Primitive and Derived in this course.
+
+\begin{table}[ht]
+    \centering
+    \begin{center}
+    \begin{tabular}{llll}
+        \toprule
+        Data Type & Range & Memory Size (bytes) & Description \\
+        \midrule
+        \texttt{bool} & \texttt{true} or \texttt{false} & 1 & Boolean \\
+        \texttt{char} & -128 to 127 & 1 & Character \\
+        \texttt{short} & -32,768 to 32,767 & 2 & Short Integer \\
+        \texttt{int} & $-2^{31}$ to $2^{31}-1$ & 4 & Integer \\
+        \texttt{long long} & $-2^{63}$ to $2^{63}-1$ & 8 & Long Long Integer \\
+        \texttt{float} & 6 decimal digits & 4 & Single-Precision Floating num \\
+        \texttt{double} & 15 decimal digits & 8 & Double-Precision Floating num \\
+        \texttt{long double} & 18 decimal digits & 12 & Extended Precision Floating num \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \caption{C++ Primitive Data Types, Ranges, and Memory Sizes}
+    \label{tab:data-types}
+\end{table}
+
+\begin{principle}
+    Auto - auto is a keyword that automatically infers the type from the value. \lstinline{auto x = "hello";}
+\end{principle}
+
+\begin{principle}
+    A char is a single character that must be wrapped in \textbf{single quotes}. \lstinline{char x = 'a';}
+\end{principle}
+
+\begin{lstlisting}[caption=Types]
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int thisIsInt = 5;
+    cout << "This is an integer: " << thisIsInt << endl;
+
+    long long thisIsLongLong = 9999999999LL;
+    cout << "This is a long long: " << thisIsLongLong << endl;
+
+    char thisIsChar = '@';
+    cout << "This is a char: " << thisIsChar << endl;
+
+    string thisIsString = "Vincent Massey";
+    cout << "This is a string: " << thisIsString << endl;
+
+    bool thisIsTrue = true;
+    bool thisIsFalse = false;
+    cout << "These are both bools: " << thisIsTrue << " and " << thisIsFalse << endl; 
+}
+\end{lstlisting}
+
+\begin{note}
+    A long long always ends with the LL suffix to distinguish between int and long long.
+\end{note}
+
+\begin{note}
+    A string is not a primitive data type! It is a class apart of the C++ Standard Library. It is created by combining a series of chars, thus be called a \textbf{derived data type}. Import the \texttt{<string>} header file to use it.
+\end{note}
+
+\subsection{Operators}
+Operators are symbols that perform operations on variables and values. They are the fundamental building blocks for all programming languages. They are used to calculation, comparisons, and assignments. There are six main operators: \textbf{Arithmetic Operators}, \textbf{Logical Operators}, \textbf{Comparison Operators}, \textbf{Assignment Operators}, \textbf{Increment Operators}, and finally, \textbf{Ternary Operators}.
+
+\subsubsection{Arithmetic Operators}
+Just like the name suggests, arithmetic operators perform arithmetic operations on variables and values. 
+
+\begin{table}[ht]
+    \centering
+    \begin{center}
+    \begin{tabular}{llll}
+        \toprule
+        Operator & Operation \\
+        \midrule
+        \texttt{+} & \texttt{addition} \\
+        \texttt{-} & \texttt{subtraction} \\
+        \texttt{/} & \texttt{division} \\
+        \texttt{*} & \texttt{multiplication} \\
+        \texttt{\%} & \texttt{modulo (remainder after division)} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \caption{C++ Primitive Data Types, Ranges, and Memory Sizes}
+    \label{tab:data-types}
+\end{table}
+
+\begin{note}
+    Unlike python, there is no operator for exponent. You have to use the \textbf{pow()} function from \texttt{<cmath>}. E.g. \lstinline{pow(2, 3)} = $2^3$ 
+\end{note}
+
+\begin{lstlisting}[caption=Arithmetic Operators]
+#include <bits/stdc++.h>
+using namespace std;
+
+int x = 7, y = 3;
+
+int main() {
+    cout << "x + y = " << x + y << endl; /* Output: 10 */ 
+    cout << "x - y = " << x - y << endl; /* Output: 4 */ 
+    cout << "x * y = " << x * y << endl; /* Output: 21 */ 
+    cout << "x / y = " << x / y << endl; /* Output: 2 */ 
+    cout << "x % y = " << x % y << endl; /* Output: 1 */ 
+    return 0;
+}
+\end{lstlisting}
+
+\begin{principle}
+    When you divide to integers in C++, the result will also return an integer by removing everything after the decimal. You can change this behaviour by type casting the numerator to a floating point number.
+\end{principle}
+
+\begin{exercise}
+    Try playing around with the division operator! Understand the uniqueness of C++ and master this skill.
+\end{exercise}
+
+\subsubsection{Comparison Operators}
+A comparison operator is used to check relationships between variables by returning boolean values. E.g. \lstinline{x > y} is used to check if x is greater than y.
+
+\begin{table}[ht]
+    \centering
+    \begin{center}
+    \begin{tabular}{llll}
+        \toprule
+        Operator & Meaning & Example \\
+        \midrule
+        \texttt{>} & \texttt{Greater than} & \texttt{4 > 5} returns false\\
+        \texttt{<} & \texttt{Less than}  & \texttt{4 < 5} returns true\\
+        \texttt{>=} & \texttt{Greater than or equal}  & \texttt{4 >= 5} returns false\\
+        \texttt{<=} & \texttt{Less than or equal}  & \texttt{5 <= 5} returns true\\
+        \texttt{==} & \texttt{is equal to}  & \texttt{4 == 5} returns false\\
+        \texttt{!=} & \texttt{not equal to}  & \texttt{4 != 5} returns true\\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \caption{Comparison Operators}
+    \label{tab:data-types}
+\end{table}
+
+\subsubsection{Assignment Operators}
+An assignment operator is used to assign values or change the values by a constant to a variable. The most simple operator for this category is \lstinline{x = 5}.
+
+\begin{table}[ht]
+    \centering
+    \begin{center}
+    \begin{tabular}{llll}
+        \toprule
+        Operator & Example & Equivalent \\
+        \midrule
+        \texttt{=} & \texttt{x = 5} & \texttt{x = 5} \\
+        \texttt{+=} & \texttt{x += 5}  & \texttt{x = x + 5} \\
+        \texttt{-=} & \texttt{x -= 5}  & \texttt{x = x - 5} \\
+        \texttt{*=} & \texttt{x *= 5}  & \texttt{x = x * 5} \\
+        \texttt{/=} & \texttt{x /= 5}  & \texttt{x = x / 5} \\
+        \texttt{\%=} & \texttt{x \%= 5}  & \texttt{x = x \% 5} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \caption{Assignment Operators}
+    \label{tab:data-types}
+\end{table}
+
+\subsubsection{Logical Operators}
+Logical Operators are used to check if expressions are true or false.
+
+\begin{table}[ht]
+    \centering
+    \begin{center}
+    \begin{tabular}{llll}
+        \toprule
+        Operator & Example & Meaning \\
+        \midrule
+        \texttt{\&\& (AND)} & \texttt{expression1 \&\& expression2} & \texttt{true if both expressions are true} \\
+        \texttt{|| (OR)} & \texttt{expression1 || expression2}  & \texttt{true if at least one expression is true} \\
+        \texttt{! (NOT)} & \texttt{!expression1}  & \texttt{true if expression is false} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \caption{Logical Operators}
+    \label{tab:data-types}
+\end{table}
+
+\begin{principle}
+The logical NOT operator flips the boolean value!    
+\end{principle}
+
+\subsection{Input/Output}
+
+\subsubsection{Input}
+In C++, cout is for outputting data, while cin is used to input data. If the input is separated with spaces or newline characters, you would get input by...
+
+\begin{lstlisting}[caption=Input]
+#include <bits/stdc++.h>
+using namespace std;
+
+string name;
+int age; 
+
+int main(){
+    cin >> name >> age;
+    /* 
+    Input can be taken in two ways:  
+    Gurjas 16 
+    -----------------
+    Gurjas
+    16
+    
+    */
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Output}
+You can then output their age in 1 year by...
+\begin{lstlisting}[caption=Output]
+#include <bits/stdc++.h>
+using namespace std;
+
+string name;
+int age; 
+
+int main(){
+    cin >> name >> age;
+
+    cout << "Hey, " << name << "!" << endl;
+    cout << "You'll be " << age + 1 << " in one year!" << endl;
+    /*
+    Input: Gurjas 16
+    Output: Hey, Gurjas!
+            You'll be 17 in one year!
+    */
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Fast I/O}
+Somtimes, you may get TLE (Time Limit Exceeded) because standard I/O is too slow.
+
+\begin{lstlisting}[caption=Fast I/O (New Template)]
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+
+    /* Code here */
+    return 0;
+}
+\end{lstlisting}
+
+\begin{note}
+    \texttt{<iostream>} - Standard input/output stream library
+\end{note}
+
+\subsection{Problems - Operators and Input}
+\problem{A plus B!}{https://dmoj.ca/problem/acc6p1}
+\problem{Squares}{https://dmoj.ca/problem/ccc04j1}
+\problem{Next in line}{https://dmoj.ca/problem/ccc13j1}
+\problem{Cupcakes}{https://dmoj.ca/problem/ccc22j1}
+
+\subsection{Conditionals}
+
+\subsubsection{If statements}
+Operators are variables are cool, but not very versatile and pretty bland. Only if we could've executed code if some condition was true.... Not to worry, though! Since conditionals are here to save the day.
+
+Comparison and logical operators are very powerful, but they are rarely ever used without conditionals. If statements, just like the name suggests, executes some part of the code if some condition is meant. Let's say we wanted to check if a number was odd, how would the code look for such a program?
+
+\begin{lstlisting}[caption=Odd]
+#include <bits/stdc++.h>
+using namespace std;
+
+int N;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    cin >> N;
+
+    if (N % 2 == 1) {
+        cout << N << " is an odd number!" << endl;
+    }
+
+    return 0;
+}
+\end{lstlisting}
+
+The \textbf{if} keyword indicates the start of a conditional statement. Then, in brackets, you have the condition in which you check if a number is odd. Finally, you place the code you want to execute in a pair of curly braces.
+
+This is amazing! But, what if we want to also print something when N is even? Of course, we can just add another if statement, but we programmers are lazy. Rather then that, we can use something called an \textbf{else statement}. If the initial condition is \textbf{not} met, you execute this second piece of code.
+
+\begin{lstlisting}[caption=Even/Odd]
+#include <bits/stdc++.h>
+using namespace std;
+
+int N;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    cin >> N;
+
+    if (N % 2 == 1) {
+        cout << N << " is an odd number!" << endl;
+    } else {
+        cout << N << " is an even number!" << endl;
+    }
+
+    return 0;
+}
+\end{lstlisting}
+
+The final scenario that we have to consider is when we have more than 2 factors to consider. In this program, there are only two cases to consider: odd or even. What if we want to check whether a number is positive, negative, or zero? In this case, we cannot just use if/else statements. We have to use something called \textbf{else if}. 
+
+\begin{lstlisting}[caption=Postive]
+#include <bits/stdc++.h>
+using namespace std;
+
+int N;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    cin >> N;
+
+    if (N > 0) {
+        cout << N << " is a postive integer." << endl;
+    } else if (N < 0) {
+        cout << N << " is a negative integer." << endl;
+    } else {
+        cout << N << " is 0!" << endl; /* 0 is 0 lol*/
+    }
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Ternary Operator}
+It's common knowledge that programmers hate to write more code than needed. If you only have two conditions for your conditional, instead of writing an if/else statement, you can use the full capability of ternary operators. E.g. \lstinline{(condition ? expression1 : expression2 )} If the condition is true, expression1 will be returned, otherwise expression2 will be.
+
+Let's write the same parity code, but with ternary operators!
+
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+int N;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    cin >> N;
+
+    string result = (N % 2 == 1 ? "odd" : "even");
+    cout << cout << N << " is an " << result << " number!" << endl;
+
+    return 0;
+}
+
+\end{lstlisting}
+
+\subsection{Problems - Conditionals}
+\problem{Triangles}{https://dmoj.ca/problem/ccc14j1}
+\problem{Boiling Water}{https://dmoj.ca/problem/ccc21j1}
+\problem{Quadrants}{https://dmoj.ca/problem/ccc17j1}
+\problem{Dog Treats}{https://dmoj.ca/problem/ccc20j1}
+
+\subsection{Loops}
+A lot of times in programming, we want to do some task multiple times. Of course, we can just copy paste our previous code multiply times, but this is not sustainable when you want the task done 10...100...100000x. You would be spamming ctrl-v until the contest time is over :skull:. This is where loops come in to save the day...literally!
+\subsubsection{For loops}
+Just like conditionals, for loops are the building blocks of any programming language. It's especially useful when you know the exact number of iterations you want to perform. A for loop is distinguished with the \textbf{for} keyword. The basic syntax of a for loop is...
+
+\begin{lstlisting}[caption=For loop syntax]
+for (initialization ; condition ; increment/decrement) {
+    // code put here
+}
+\end{lstlisting}
+
+Let's say you want to find the average of the numbers from 1-100. How would you do that...?
+
+\begin{lstlisting}[caption=Average from 1-100]
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    double avg = 0;
+    for (int i = 1; i <= 100; i++) {
+        avg += i;
+    }
+    avg /= 100;
+
+    cout << "The average of the numbers from 1-100 is " << avg << endl;
+}
+\end{lstlisting}
+
+\subsubsection{While loops}
+In this C++ structure, a block of code will be executed again and again, until a specified condition becomes false.
+
+\begin{lstlisting}[caption=While loop syntax]
+while (condition) {
+    // code put here
+}
+\end{lstlisting}
+
+The condition will be checked at the start of each iteration. If the condition returns false, the block of code will not be executed.
+
+Let's say we want to create a safe! The user will keep inputting a password until he guesses the right password. There should be some prize when the safe is opened.
+
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+int passWord = 1234; // don't make this your password irl
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie();
+
+    int guess; cin >> guess;
+
+    while (guess != passWord) {
+        cout << "Wrong password. Try again!" << endl;
+        cin >> password;
+    }
+
+    cout << "Here's your prize: $5" << endl; 
+}
+\end{lstlisting}
+
+It's also very common to do \lstinline{while (true)}. This is useful when the conditions become more complex. Obviously, you can't just keep it just like that, since it will never stop executing the code. In this case, you can use the \textbf{break} keyword to break out of a loop in some sort of conditional.
+
+\begin{principle}
+    When you don't include a break statement in a while true loop, you will run into something called a \textbf{infinite loop} in which case the program will crash. Always make sure there is a case where the program breaks out the while loop.
+\end{principle}
+
+\subsection{Problems - Loops}
+\problem{Silent Auction}{https://dmoj.ca/problem/ccc21j2}
+\problem{Max flow}{https://dmoj.ca/problem/acmtryouts0a}
+\problem{Epidemiology}{https://dmoj.ca/problem/ccc20j2}
+\problem{Recruits}{https://dmoj.ca/problem/vmss7wc15c2p1}
+
+\subsection{Functions}
+\subsubsection{Intro to functions}
+In \textbf{\textit{Mathematics}}, a function is a structure that takes in one or more arguments and returns a value after putting those arguments in an expression. Functions are also very common in programming but behave a bit differently. A function is a block of code that is only run when called. They are very useful when you re-use the same code multiple times and for code organization. We have already seen one function; the \lstinline{int main()} function.
+
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+void helloWorld() {
+    cout << "Hello, World!" << endl;
+}
+
+int main() {
+    helloWorld();
+    helloWorld();
+    helloWorld();
+    return 0;
+}
+/*
+Output:
+Hello, World!
+Hello, World!
+Hello, World!
+*/
+\end{lstlisting}
+
+\begin{note}
+    If a function is created after the main function, you will run into an error. All user-defined functions must be put above the main function.
+\end{note}
+
+\subsubsection{Separating Function Declaration}
+Although, it is possible to separate the declaration and definition of the function.
+
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+void helloWorld();
+
+int main() {
+    helloWorld();
+    return 0;
+}
+
+void helloWorld() {
+    cout << "Hello, World!" << endl;
+}
+
+/*
+Output:
+Hello, World!
+*/
+\end{lstlisting}
+
+\subsubsection{Functions with parameters}
+You may be wondering, why would you use a function rather than a for loop? It's because functions can be made dynamic by passing it data as parameters. Parameters act like variables inside the function.
+
+\begin{lstlisting}[caption=Function with parameters]
+void functionName(type parameterOne, type parameterTwo, type parameterThree){
+    // code put here
+}
+\end{lstlisting}
+
+Here's an example of a function using parameters
+
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+void greetings(string name);
+
+int main() {
+    string name; cin >> name;
+    greetings(name);
+    return 0;
+}
+
+void greetings(string name) {
+    cout << "Hello, " << name << endl;
+}
+\end{lstlisting}
+
+
+\subsubsection{Functions with optional Parameter}
+You can also provide a default parameter if no argument is passed.
+
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+void greetings(string name = "Joe") {
+    cout << "Hello, " << name << endl;
+}
+
+int main() {
+    greetings("Jeff");
+    greetings("Bob");
+    greetings();
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Functions with return}
+So far, we've defined functions using the \lstinline{void} keyword. This indicated that our function won't have any \lstinline{return value}. A return value allows you to send values back to the caller of the function. It signifies the end of the function, and any code that precedes it \textbf{will not be executed}. Instead of using the \lstinline{void} keyword, we will be using the type of the return value just like variables. Here's an example of a sum function:
+
+\begin{lstlisting}
+#include <bits/stdc++.h>
+using namespace std;
+
+int sum(int a, int b) {
+    int result = a + b;
+    return result;
+}
+
+int main() {
+    int a = 5; int b = 2;
+    int result = sum(a, b);
+    cout << result << endl;
+}
+\end{lstlisting}
+
+If anything was placed after the return statement, that code will be simply ignored. 
+
+\begin{note}
+    Changing the value of variables are known to be \lstinline{local changes}. They won't affect the value of the actual variables passed. Playing around with this is left to the reader as an exercise. 
+\end{note}
+
+\subsubsection{Function with references}
+If you ever need to make the changes in a function \lstinline{global}, they can be done by passing the parameter as a reference \lstinline{&}. 
+
+\begin{lstlisting}[caption=Function with references]
+#include <bits/stdc++.h>
+using namespace std;
+
+void myFunc(int& a) {
+    a += 1;
+}
+
+int main() {
+    int a = 5;
+    myFunc(a);
+    cout << a << endl; // a is now equivalent to 6
+}
+\end{lstlisting}
+
+\subsection{Arrays}
+Let's say you wanted to store the grades of 4 students. Just like we've seen in the past, the obvious answer is just to create four new variables to store the grades. But let's say our data set changes to 10...100...2000 students. You don't want to create that many variables. You would much rather have another way where you can stay much more organized. This is where arrays come in. When declaring an array, we have to include the type of the variable it holds, a name for the array, and a size for the number of elements it stores using the syntax: \lstinline{type name[size];}.
+
+For example, let's say we want our array to store the numbers from 1-50. We'll call this array nums and give it a size of 50.
+
+\begin{lstlisting}[caption=Array Example]
+#include <bits/stdc++.h>
+using namespace std;
+
+int nums[50];
+
+int main() {
+    ios::sync_with_stdio(0); cin.tie(0);
+    for (int i = 0; i < 50; i++) {
+        nums[i] = i + 1;
+        // example: i = 0 -> nums[i] = i + 1;
+    }
+}
+\end{lstlisting}
+
+\begin{note}
+    Arrays are accessed using square brackets such as \lstinline{nums[index]}. Note that index's start counting from 0.
+\end{note}
+
+\begin{principle}
+    Be careful of accidentally accessing an index out of an array's range. This will cause erratic behaviour without the programming crashing.
+\end{principle}
+
+\begin{principle}
+    It's always best to initialize arrays outside the main functions due to unexpected/weird behaviour. 
+\end{principle}
+
+You can alternatively initialize the array with the declaration. 
+
+\begin{lstlisting}[caption=Array initialization]
+char vowels[] = {'a', 'e', 'i', 'o', 'u'}; // size is automatically determined (only for direct initialization.
+\end{lstlisting}
+
+\subsection{Summary}
+C++ is a complicated language and we threw quite a lot at you guys in the past few sections. But with practice, all this will become common knowledge. There's are many slick features and tricks that can only be found with practice. So, try the practice problems and read the editorials if you ever get stuck. Here are a few links to the official C++ documentation where you can find excessive articles on all the ins and outs of the language.
+
+\begin{itemize}
+    \item \url{https://en.cppreference.com/w/}
+    \item \url{http://www.cplusplus.com/reference/}
+\end{itemize}
+
+\subsection{Homework Problems}
+\problem{Multiple Choice}{https://dmoj.ca/problem/ccc11s2}
+
+\section{C++ built-in data structures}
+\subsection{Vector}
+\subsection{Set}
+\subsection{Map}
+
+% \subsection{Type Conversion}
+
+% ------------------------------------------------------------------------------
+% Reference and Cited Works
+% ------------------------------------------------------------------------------
+
+% \bibliographystyle{IEEEtran}
+% \bibliography{References.bib}
+
+% ------------------------------------------------------------------------------
+
+\end{document}
