@@ -16,10 +16,15 @@
 \usepackage{algorithmic}
 \usepackage{listings}
 \usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{xcolor,colortbl}
+\definecolor{green}{rgb}{0.1,0.1,0.1}
 
 \colorlet{LightGray}{White!90!Periwinkle}
 \colorlet{LightOrange}{Orange!15}
 \colorlet{LightGreen}{Green!15}
+\definecolor{gold}{RGB}{152, 104, 1}
 
 \newcommand{\HRule}[1]{\rule{\linewidth}{#1}}
 
@@ -86,6 +91,17 @@
   breakatwhitespace=true,
   tabsize=4,
   showstringspaces=false
+}
+
+% Define a custom shaded box style
+\tcbset{
+    mybox/.style={
+        colback=gray!5, % Background color
+        colframe=gray!10,  % Border color
+        boxrule=0.5pt,   % Border width
+        sharp corners,   % Sharp corners
+        fonttitle=\bfseries
+    }
 }
 
 % ------------------------------------------------------------------------------
@@ -836,6 +852,129 @@ C++ is a complicated language and we threw quite a lot at you guys in the past f
 \subsection{Vector}
 \subsection{Set}
 \subsection{Map}
+
+\section{Data Structures}
+\subsection{Prefix Sum Arrays}
+Let’s start with an exercise: Given a sequence and it’s cumulative sum,
+\begin{align*}
+    \textbf{1} &+ \textbf{2} + \textbf{5} + \textbf{3} + \textbf{9} + \textbf{10} + \textbf{56} + \textbf{8} \\
+    &= \textbf{94}
+\end{align*}
+What is the sum after \textbf{16} is added?
+\begin{align*}
+    \textbf{1} &+ \textbf{2} + \textbf{5} + \textbf{3} + \textbf{9} + \textbf{10} + \textbf{56} + \textbf{8} + \textcolor{red!80}{\textbf{16}} \\
+    &= \textbf{?}
+\end{align*}
+
+Simple, right? All you do is add \textbf{16} to \textbf{94} and that’s the new sum. You could have alternatively recalculated the entire sum, but of course that’s very inefficient.\newline
+
+Now, let’s try mapping this to the world of computer science: \newline
+
+Given a list of numbers, calculate the sum from the start of the list to position i. There will be Q different i’s provided.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabularx}{\linewidth}{|X|X|X|X|X|X|X|}
+        \hline
+        \cellcolor{gray!25} \textbf{Index} & \cellcolor{gray!25} \textbf{Col 1} & \cellcolor{gray!25} \textbf{Col 2} & \cellcolor{gray!25} \textbf{Col 3} & \cellcolor{gray!25} \textbf{Col 4} & \cellcolor{gray!25} \textbf{Col 5} & \cellcolor{gray!25} \textbf{Col 6}\\
+        \hline
+        \cellcolor{gray!25}a & 5 & 1 & 3 & 4 & 6 & 3 \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+For example:
+\begin{tcolorbox}[mybox]
+    N = \textcolor{gold}{6} Q = \textcolor{gold}{3} \newline
+    List: \textcolor{gold}{5 1 3 4 6 3} \newline
+    Q1: \textcolor{gold}{2} \newline
+    Q2: \textcolor{gold}{4} \newline
+    Q3: \textcolor{gold}{5} 
+\end{tcolorbox}
+
+\subsubsection*{Naive Implementation}
+For each query, write a for loop and keep track of the cumulative sum. How can we make this solution faster?
+
+\subsubsection*{Hint 1:}
+Use the same idea from the exercise to precompute the sums for each position.
+
+\subsubsection*{Hint 1:}
+Imagine the numbers are placed on a number line. Prefix sum tells you the sum of all the numbers to the left of any position in that line, including the number at that position. 
+
+\begin{table}[ht]
+    \centering
+    \begin{tabularx}{\linewidth}{|X|X|X|X|X|X|X|}
+        \hline
+        \cellcolor{gray!25} \textbf{Index} & \cellcolor{gray!25} \textbf{Col 1} & \cellcolor{gray!25} \textbf{Col 2} & \cellcolor{gray!25} \textbf{Col 3} & \cellcolor{gray!25} \textbf{Col 4} & \cellcolor{gray!25} \textbf{Col 5} \\
+        \hline
+        \cellcolor{gray!25}a & 5 & 1 & 3 & 4 & 6 \\
+        \hline
+        \cellcolor{gray!25}pref & a[1] & a[1]+a[2] & a[1] + a[2] + a[3] & a[1] + a[2] + a[3] + a[4] & a[1] + a[2] + a[3] + a[4] + a[5] \\
+        \hline
+        \cellcolor{gray!25}a & a[1] & pref[1] + a[2] & pref[2] + a[3] & pref[3] + a[4] & pref[4] + a[5] \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+
+\subsubsection*{Instructions:}
+\begin{itemize}
+    \item Create a list of numbers of the length N+1 (0-N inclusive). 
+    \item Loop through all the elements in the initial array. At each step, add the current number to the last number in your "prefix sum" list psa[i] = a[i] + psa[i - 1].
+    \item After you're done, your "prefix sum" list is like a dictionary. If you want to know the sum of numbers from the start up to any position in your original line, just look at that position in the "prefix sum" list. It's the sum you're looking for!
+
+\end{itemize}
+
+\subsubsection{Code: }
+\begin{lstlisting}[caption=Prefix Sum]
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+   ios::sync_with_stdio(0); cin.tie(0);
+   int N; int Q;
+   cin >> N >> Q;
+   int arr[N], psa[N + 1];
+
+   psa[0] = 0;
+
+   for (int i = 0; i < N; ++i){
+      cin >> arr[i];
+      psa[i + 1] = psa[i] + arr[i];
+   }
+}
+\end{lstlisting}
+
+Now, let’s try generalizing this algorithm. So far, the left position had to be at index 0 for this process to work. How can we alter the algorithm such that it can work \textbf{without} fixing the left position? For example, how can we find the sum from position 3 to 4?
+
+\begin{table}[ht]
+    \centering
+    \begin{tabularx}{\linewidth}{|X|X|X|X|X|X|X|}
+        \hline
+        \cellcolor{gray!25} \textbf{Index} & \cellcolor{gray!25} \textbf{Col 1} & \cellcolor{gray!25} \textbf{Col 2} & \cellcolor{gray!25} \textbf{Col 3} & \cellcolor{gray!25} \textbf{Col 4} & \cellcolor{gray!25} \textbf{Col 5} \\
+        \hline
+        \cellcolor{gray!25}a & 5 & 1 & 3 & 4 & 6 \\
+        \hline
+        \cellcolor{gray!25}pref & a[1] & a[1]+a[2] & a[1] + a[2] + a[3] & a[1] + a[2] + a[3] + a[4] & a[1] + a[2] + a[3] + a[4] + a[5] \\
+        \hline
+        \cellcolor{gray!25}a & a[1] & pref[1] + a[2] & pref[2] + a[3] & pref[3] + a[4] & pref[4] + a[5] \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+
+We would like to manipulate these values to get \textbf{a[3] + a[4]}. Clearly, some part of our answer lies in pref[4] = a[1] + a[2] + a[3] + a[4]. Ideally, we would like to remove a[1] + a[2]. We can accomplish that…….. by subtracting out pref[2]=a[1]+a[2]! This would leave us with a[3] + a[4] which was the result we were looking for.
+
+\begin{align*}
+    \textbf{arr[L]} &+ \textbf{arr[L + 1]} + ... + \textbf{arr[R - 1]} + \textbf{arr[R]} = \textbf{pref[R]} - \textbf{pref[L - 1]} \\
+\end{align*}
+
+\subsubsection{Practice Problems: }
+\problem{Deforestation}{https://dmoj.ca/problem/dmopc14c2p4}
+\problem{Silver - GG}{https://dmoj.ca/problem/vmss7wc16c2p2}
+\problem{Avocado Trees!}{https://dmoj.ca/problem/avocadotrees}
+\problem{Marathon}{https://dmoj.ca/problem/gfssoc2j4}
+
 
 % \subsection{Type Conversion}
 
